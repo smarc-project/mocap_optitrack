@@ -29,15 +29,26 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch_ros.actions import Node
-from launch.substitutions import TextSubstitution
+from launch_ros.actions import Node, SetParameter
+from launch_ros.substitutions import FindPackagePrefix, FindPackageShare
+from launch.substitutions import TextSubstitution, PathJoinSubstitution
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import ThisLaunchFileDir
 from launch.actions import ExecuteProcess
+import xacro
 
 def generate_launch_description():
+
     return LaunchDescription([
+        
+        IncludeLaunchDescription(
+        PathJoinSubstitution([FindPackageShare('urdf_launch'), 'launch', 'display.launch.py']),
+        launch_arguments={
+            'urdf_package': 'pool_description',
+            'jsp_gui': 'false',
+            'urdf_package_path': PathJoinSubstitution(['robots', 'pool_default.urdf.xacro'])}.items()
+    ),
         Node(
             package='mocap_optitrack',
             executable='mocap_node',
